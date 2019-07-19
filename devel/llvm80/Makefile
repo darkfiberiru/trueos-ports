@@ -2,9 +2,13 @@
 
 PORTNAME=	llvm
 DISTVERSION=	8.0.0
-PORTREVISION=	0
+PORTREVISION=	2
 CATEGORIES=	devel lang
-MASTER_SITES=	http://${PRE_}releases.llvm.org/${LLVM_RELEASE}/${RCDIR}
+.if ${DISTVERSION:M*rc*}
+MASTER_SITES=	https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_RELEASE}-${DISTVERSION:S/${LLVM_RELEASE}//}/
+.else
+MASTER_SITES=	http://releases.llvm.org/${LLVM_RELEASE}/
+.endif
 PKGNAMESUFFIX=	${LLVM_SUFFIX}
 DISTNAME=	${PORTNAME}-${DISTVERSION}.src
 DISTFILES=	${PORTNAME}-${DISTVERSION}.src${EXTRACT_SUFX}
@@ -16,8 +20,6 @@ COMMENT=	LLVM and Clang
 
 LLVM_RELEASE=	${DISTVERSION:C/rc.*//}
 LLVM_MAJOR=	${LLVM_RELEASE:C/\.[0-9]\.[0-9]$//}
-RCDIR=		${DISTVERSION:S/${LLVM_RELEASE}//:C|(rc.*)|\1/|}
-PRE_=		${DISTVERSION:C/.*rc.*/pre/:N*[0-9]*}
 LLVM_SUFFIX=	${LLVM_RELEASE:C/\.[0-9]$//:C/\.//}
 
 LLVM_PREFIX=	${PREFIX}/llvm${LLVM_SUFFIX}
@@ -77,7 +79,8 @@ BE_${BE}_PLIST_FILES=	${_BE_LIBS_${BE}:O:S/$/.a/:S|^|${LLVM_PREFIX:S|${PREFIX}/|
 CLANG_DESC=	Build clang
 CLANG_EXTRA_PATCHES=	${PATCHDIR}/clang
 CLANG_DISTFILES=	cfe-${DISTVERSION}.src${EXTRACT_SUFX}
-CLANG_CMAKE_ON=		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
+CLANG_CMAKE_ON=		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp \
+			-DCLANG_ANALYZER_ENABLE_Z3_SOLVER=OFF
 CLANG_PORTDOCS=		clang
 CLANG_USE=		GNOME=libxml2
 COMPILER_RT_DESC=	Sanitizer libraries
@@ -416,7 +419,7 @@ post-build-COMPILER_RT-on:
 
 post-install:
 	${RM} -r ${STAGEDIR}${LLVM_PREFIX}/include/llvm/MC/MCAnalysis
-	${RMDIR} ${STAGEDIR}/usr/local/llvm80/include/llvm/TextAPI/MachO
+	${RMDIR} ${STAGEDIR}/${PREFIX}/llvm80/include/llvm/TextAPI/MachO
 	${INSTALL_SCRIPT} ${WRKDIR}/llvm-wrapper.sh \
 	    ${STAGEDIR}${PREFIX}/bin/${FIRST_COMMAND}${LLVM_SUFFIX}
 .for command in ${COMMANDS:C/^/XXXX/1:NXXXX*}
@@ -474,9 +477,12 @@ post-install-LIT-on:
 	${LN} -f ${STAGEDIR}${LLVM_PREFIX}/bin/lit \
 	    ${STAGEDIR}${PREFIX}/bin/llvm-lit${LLVM_SUFFIX}
 	${MKDIR} ${STAGEDIR}${PYTHONPREFIX_SITELIBDIR}/lit${LLVM_SUFFIX}
+	${MKDIR} ${STAGEDIR}${PYTHONPREFIX_SITELIBDIR}/lit${LLVM_SUFFIX}/builtin_commands
 	${MKDIR} ${STAGEDIR}${PYTHONPREFIX_SITELIBDIR}/lit${LLVM_SUFFIX}/formats
 	${INSTALL_DATA} ${WRKSRC}/utils/lit/lit/*.py \
 	    ${STAGEDIR}${PYTHONPREFIX_SITELIBDIR}/lit${LLVM_SUFFIX}
+	${INSTALL_DATA} ${WRKSRC}/utils/lit/lit/builtin_commands/*.py \
+			${STAGEDIR}${PYTHONPREFIX_SITELIBDIR}/lit${LLVM_SUFFIX}/builtin_commands
 	${INSTALL_DATA} ${WRKSRC}/utils/lit/lit/formats/*.py \
 			${STAGEDIR}${PYTHONPREFIX_SITELIBDIR}/lit${LLVM_SUFFIX}/formats
 	${INSTALL_PROGRAM} ${WRKDIR}/.build/bin/FileCheck \

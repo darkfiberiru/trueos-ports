@@ -2,8 +2,6 @@
 
 .include "${.CURDIR}/Makefile.common"
 
-PORTREVISION=	3
-
 MASTER_SITES=	https://download.documentfoundation.org/libreoffice/src/${PORTVERSION}/ \
 		https://dev-www.libreoffice.org/src/:src \
 		https://dev-www.libreoffice.org/extern/:ext
@@ -21,7 +19,6 @@ BUILD_DEPENDS=	p5-Archive-Zip>=0:archivers/p5-Archive-Zip \
 		dmake:devel/dmake \
 		${LOCALBASE}/bin/gperf:devel/gperf \
 		mdds>=1.4:devel/mdds \
-		gpatch:devel/patch \
 		ucpp:devel/ucpp \
 		${LOCALBASE}/include/sane/sane.h:graphics/sane-backends \
 		vigra-config:graphics/vigra \
@@ -254,7 +251,6 @@ CONFIGURE_ARGS=	--disable-dependency-tracking \
 		--with-external-hyph-dir=${LOCALBASE}/share/hyphen \
 		--with-external-tar=${DISTDIR}/${DIST_SUBDIR} \
 		--with-external-thes-dir=${LOCALBASE}/share/mythes \
-		--with-gnu-patch=${LOCALBASE}/bin/gpatch \
 		--with-os-version=${OSVERSION} \
 		--with-parallelism=${MAKE_JOBS_NUMBER} \
 		--with-system-cppunit \

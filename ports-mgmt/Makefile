@@ -19,6 +19,7 @@
     SUBDIR += lsknobs
     SUBDIR += managepkg
     SUBDIR += mkreadmes
+    SUBDIR += modules2tuple
     SUBDIR += octopkg
     SUBDIR += p5-FreeBSD-Portindex
     SUBDIR += p5-FreeBSD-Ports
@@ -69,6 +70,7 @@
     SUBDIR += poudriere-devel
     SUBDIR += poudriere-trueos
     SUBDIR += psearch
+    SUBDIR += py-FreeBSD-ports
     SUBDIR += py-pytoport
     SUBDIR += py-skog
     SUBDIR += software-station

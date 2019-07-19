@@ -5,7 +5,6 @@
 
 # List of ports to update
 # Usage: <portname>::<project>::<repo>::<defaultbranch>
-PLIST="os::trueos::trueos::trueos-master"
 PLIST="${PLIST} sysutils/pc-sysinstall::trueos::pc-sysinstall::master"
 PLIST="${PLIST} sysutils/pc-installdialog::trueos::pc-installdialog::master"
 
@@ -18,8 +17,8 @@ usage()
 	echo "Example: $0 all"
 	echo "This will update *all* the ports to their latest versions"
 	echo ""
-	echo "Example: $0 os/src 18.12"
-	echo "This will update the os/src to the version in GitHub tagged 18.12"
+	echo "Example: $0 sysutils/pc-installdialog 18.12"
+	echo "This will update the sysutils/pc-installdialog to the version in GitHub tagged 18.12"
 	exit 1
 }
 
@@ -36,6 +35,10 @@ update_port()
 	fi
 
 	GH_HASH=$(fetch -o - https://api.github.com/repos/$project/$repo/git/refs/heads/$dbranch 2>/dev/null | jq -r '."object"."sha"')
+	if [ -z "${GH_HASH}" ] ; then
+		#Not a branch or commit hash. Check to see if it is a version "tag" instead
+		GH_HASH=$(fetch -o - https://api.github.com/repos/$project/$repo/git/refs/tags/$dbranch 2>/dev/null | jq -r '."object"."sha"')
+	fi
 	GH_DATE=$(fetch -o - https://api.github.com/repos/$project/$repo/commits/$GH_HASH 2>/dev/null | jq -r '."commit"."author"."date"')
 
 	#echo "$GH_HASH"
@@ -51,15 +54,9 @@ update_port()
 
 	#echo "$TSTAMP"
 
-	if [ "$port" = "os" ] ; then
-		sed -i '' "s/.*OS_PORTVERSION=.*/OS_PORTVERSION=	$TSTAMP/" ${port}/Makefile.common
-		sed -i '' "s/.*GH_TAGNAME=.*/GH_TAGNAME=	$GH_HASH/" ${port}/src/Makefile
-		make -C ${port}/src OSVERSION=1200000 makesum
-	else
-		sed -i '' "s/.*PORTVERSION=.*/PORTVERSION=	$TSTAMP/" ${port}/Makefile
-		sed -i '' "s/.*GH_TAGNAME=.*/GH_TAGNAME=	$GH_HASH/" ${port}/Makefile
-		make -C ${port} OSVERSION=1200000 makesum
-	fi
+	sed -i '' "s/.*PORTVERSION=.*/PORTVERSION=	$TSTAMP/" ${port}/Makefile
+	sed -i '' "s/.*GH_TAGNAME=.*/GH_TAGNAME=	$GH_HASH/" ${port}/Makefile
+	make -C ${port} OSVERSION=1200000 makesum
 
 }
 
@@ -68,6 +65,9 @@ if [ -z "$1" ] ; then
 fi
 
 BRANCH="$2"
+
+# Set the ports dir location
+export PORTSDIR="$(pwd)"
 
 if [ "$1" = "all" ] ; then
 	for p in $PLIST

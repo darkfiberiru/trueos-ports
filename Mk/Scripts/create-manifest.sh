@@ -14,7 +14,7 @@ validate_env dp_ABISTRING dp_ACTUAL_PACKAGE_DEPENDS dp_CATEGORIES dp_COMMENT \
 	dp_PKGORIGIN dp_PKGPOSTDEINSTALL dp_PKGPOSTINSTALL dp_PKGPOSTUPGRADE \
 	dp_PKGPREDEINSTALL dp_PKGPREINSTALL dp_PKGPREUPGRADE dp_PKGUPGRADE \
 	dp_PKGVERSION dp_PKG_BIN dp_PKG_IGNORE_DEPENDS dp_PKG_NOTES \
-	dp_PORT_OPTIONS dp_PREFIX dp_USERS dp_WWW
+	dp_PORT_OPTIONS dp_PREFIX dp_USERS dp_WWW dp_VITAL
 
 [ -n "${DEBUG_MK_SCRIPTS}" -o -n "${DEBUG_MK_SCRIPTS_CREATE_MANIFEST}" ] && set -x
 
@@ -57,10 +57,14 @@ EOT
 [ -z "${dp_LICENSE}" ] || echo "licenses: [ ${dp_LICENSE} ]"
 [ -z "${dp_USERS}" ] || echo "users: [ ${dp_USERS} ]"
 [ -z "${dp_GROUPS}" ] || echo "groups: [ ${dp_GROUPS} ]"
-[ -n "${dp_NO_ARCH}" -a -z "${dp_ABISTRING}" ] && echo "arch : $(${dp_PKG_BIN} config abi | tr '[:upper:]' '[:lower:]' | cut -d: -f1,2):*"
-[ -n "${dp_NO_ARCH}" -a -z "${dp_ABISTRING}" ] && echo "abi : $(${dp_PKG_BIN} config abi | cut -d: -f1,2):*"
-[ -n "${dp_ABISTRING}" ] && echo "arch : $(echo ${dp_ABISTRING} | tr '[:upper:]' '[:lower:]')"
-[ -n "${dp_ABISTRING}" ] && echo "abi : $(echo ${dp_ABISTRING})"
+if [ -n "${dp_NO_ARCH}" -a -z "${dp_ABISTRING}" ] ; then
+	echo "arch : $(${dp_PKG_BIN} config abi | tr '[:upper:]' '[:lower:]' | cut -d: -f1,2):*"
+	echo "abi : $(${dp_PKG_BIN} config abi | cut -d: -f1,2):*"
+elif [ -n "${dp_ABISTRING}" ] ; then
+	echo "arch : $(echo ${dp_ABISTRING} | tr '[:upper:]' '[:lower:]')"
+	echo "abi : $(echo ${dp_ABISTRING})"
+fi
+[ -n "${dp_VITAL}" ] && echo "vital: true"
 
 # Then the key/values sections
 echo "deps: { "
@@ -114,14 +118,24 @@ done
 
 exec >${dp_METADIR}/+DISPLAY
 
+echo '['
 for message in ${dp_PKGMESSAGES}; do
-  [ -f "${message}" ] && cat "${message}"
+	if [ -f "${message}" ]; then
+		#if if starts with [ then it is ucl and we do drop last and first line
+		if head -1 "${message}" | grep -q '^\['; then
+			sed '1d;$d' "${message}"
+		else
+			echo '{message=<<EOD'
+			cat "${message}"
+			printf 'EOD\n},\n'
+		fi
+	fi
 done
 
 # Try and keep these messages in sync with check-deprecated
 if [ ${dp_MAINTAINER} = "ports@FreeBSD.org" ]; then
-	if [ -f "${dp_METADIR}/+DISPLAY" ]; then echo; fi
 	cat <<-EOT
+	{ message=<<EOD
 	===>   NOTICE:
 
 	The ${dp_PKGBASE} port currently does not have a maintainer. As a result, it is
@@ -133,12 +147,14 @@ if [ ${dp_MAINTAINER} = "ports@FreeBSD.org" ]; then
 	More information about port maintainership is available at:
 
 	https://www.freebsd.org/doc/en/articles/contributing/ports-contributing.html#maintain-port
+	EOD
+	},
 	EOT
 fi
 
 if [ -n "${dp_DEPRECATED}" ]; then
-	if [ -f "${dp_METADIR}/+DISPLAY" ]; then echo; fi
 	cat <<-EOT
+	{ message=<<EOD
 	===>   NOTICE:
 
 	This port is deprecated; you may wish to reconsider installing it:
@@ -153,8 +169,6 @@ if [ -n "${dp_DEPRECATED}" ]; then
 
 		EOT
 	fi
+	printf 'EOD\n},\n'
 fi
-
-if [ ! -s ${dp_METADIR}/+DISPLAY ]; then
-	rm -f ${dp_METADIR}/+DISPLAY
-fi
+echo ']'

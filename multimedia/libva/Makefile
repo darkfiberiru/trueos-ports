@@ -1,7 +1,7 @@
 # $FreeBSD$
 
 PORTNAME=	libva
-PORTVERSION=	2.4.1
+PORTVERSION=	2.5.0
 CATEGORIES=	multimedia
 
 PATCH_SITES=	https://github.com/${GH_ACCOUNT}/${GH_PROJECT}/commit/
@@ -19,7 +19,11 @@ USES=		meson pkgconfig
 USE_GITHUB=	yes
 USE_LDCONFIG=	yes
 GH_ACCOUNT=	intel
-LDFLAGS+=	-lpthread # for pthread_getthreadid_np
+# -lpthread is not necessary if pthread_getthreadid_np is a libc stub
+LDFLAGS+=	${LDFLAGS_${OPSYS}_${OSREL}}
+LDFLAGS_FreeBSD_11.2=	-lpthread
+LDFLAGS_FreeBSD_11.3=	-lpthread
+LDFLAGS_FreeBSD_12.0=	-lpthread
 
 OPTIONS_DEFINE=	GLX WAYLAND X11
 OPTIONS_DEFAULT=GLX WAYLAND X11
@@ -37,9 +41,5 @@ WAYLAND_MESON_YES=	with_wayland
 
 X11_USE=		XORG=x11,xorgproto,xext,xfixes
 X11_MESON_YES=		with_x11
-
-post-patch:	.SILENT
-# V4L2 is unused since http://github.com/intel/libva/commit/70074679333c
-	${REINPLACE_CMD} '/videodev2\.h/d' ${WRKSRC}/va/va_backend.h
 
 .include <bsd.port.mk>

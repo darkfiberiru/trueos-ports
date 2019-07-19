@@ -1,5 +1,4 @@
 bin/kpackagetool5
-etc/xdg/kpackage.categories
 include/KF5/KPackage/KPackage/Package
 include/KF5/KPackage/KPackage/PackageLoader
 include/KF5/KPackage/KPackage/PackageStructure
@@ -14,6 +13,8 @@ lib/cmake/KF5Package/KF5PackageConfigVersion.cmake
 lib/cmake/KF5Package/KF5PackageMacros.cmake
 lib/cmake/KF5Package/KF5PackageTargets-%%CMAKE_BUILD_TYPE%%.cmake
 lib/cmake/KF5Package/KF5PackageTargets.cmake
+lib/cmake/KF5Package/KF5PackageToolsTargets-%%CMAKE_BUILD_TYPE%%.cmake
+lib/cmake/KF5Package/KF5PackageToolsTargets.cmake
 lib/cmake/KF5Package/qrc.cmake
 lib/libKF5Package.so
 lib/libKF5Package.so.5
@@ -78,3 +79,4 @@ share/locale/ug/LC_MESSAGES/libkpackage5.mo
 share/locale/uk/LC_MESSAGES/libkpackage5.mo
 share/locale/zh_CN/LC_MESSAGES/libkpackage5.mo
 share/locale/zh_TW/LC_MESSAGES/libkpackage5.mo
+share/qlogging-categories5/kpackage.categories

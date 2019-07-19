@@ -72,6 +72,11 @@
     SUBDIR += fstobdf
     SUBDIR += gcb
     SUBDIR += gdm
+    SUBDIR += ghostbsd-installed-common-settings
+    SUBDIR += ghostbsd-live-common-settings
+    SUBDIR += ghostbsd-mate-settings
+    SUBDIR += ghostbsd-slim-theme
+    SUBDIR += ghostbsd-xfce-settings
     SUBDIR += gmrun
     SUBDIR += gnome-clipboard-daemon
     SUBDIR += gnome-desktop
@@ -213,6 +218,7 @@
     SUBDIR += mate-applets
     SUBDIR += mate-base
     SUBDIR += mate-desktop
+    SUBDIR += mate-live-settings
     SUBDIR += mate-menus
     SUBDIR += mate-panel
     SUBDIR += mate-screensaver
@@ -262,11 +268,13 @@
     SUBDIR += printscreen
     SUBDIR += props
     SUBDIR += py-caffeine-ng
+    SUBDIR += py-pyscreenshot
     SUBDIR += py-pyvirtualdisplay
     SUBDIR += py-qt5-opengl
     SUBDIR += py-xcffib
     SUBDIR += py-xdot
     SUBDIR += py-xdot06
+    SUBDIR += qimageblitz
     SUBDIR += qt5-qev
     SUBDIR += qt5-x11extras
     SUBDIR += qterminal
@@ -274,6 +282,7 @@
     SUBDIR += rendercheck
     SUBDIR += rgb
     SUBDIR += rofi
+    SUBDIR += rofi-calc
     SUBDIR += rofi-pass
     SUBDIR += rox-wallpaper
     SUBDIR += roxbg
@@ -302,9 +311,11 @@
     SUBDIR += sselp
     SUBDIR += stalonetray
     SUBDIR += startup-notification
+    SUBDIR += station-tweak
     SUBDIR += sterm
     SUBDIR += stjerm
     SUBDIR += swarp
+    SUBDIR += swaybg
     SUBDIR += swayidle
     SUBDIR += swaylock
     SUBDIR += sxhkd
@@ -394,6 +405,7 @@
     SUBDIR += xev
     SUBDIR += xeyes
     SUBDIR += xf86dga
+    SUBDIR += xfce-live-settings
     SUBDIR += xfce4-clipman-plugin
     SUBDIR += xfce4-conf
     SUBDIR += xfce4-dashboard
@@ -479,7 +491,6 @@
     SUBDIR += xscreensaver-gnome
     SUBDIR += xscreensaver-gnome-hacks
     SUBDIR += xscreensaver.app
-    SUBDIR += xsel
     SUBDIR += xsel-conrad
     SUBDIR += xset
     SUBDIR += xsetmode

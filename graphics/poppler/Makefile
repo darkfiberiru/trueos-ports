@@ -2,9 +2,10 @@
 # $FreeBSD$
 
 PORTNAME=	poppler
-DISTVERSION=	0.75.0
+DISTVERSION=	0.78.0
+PORTREVISION=	1
 CATEGORIES=	graphics print
-MASTER_SITES=	http://poppler.freedesktop.org/
+MASTER_SITES=	https://poppler.freedesktop.org/
 
 MAINTAINER?=	gnome@FreeBSD.org
 COMMENT?=	PDF rendering library

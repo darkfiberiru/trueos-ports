@@ -2,7 +2,6 @@
 
 PORTNAME=	plasma-framework
 DISTVERSION=	${KDE_FRAMEWORKS_VERSION}
-PORTREVISION=	1
 CATEGORIES=	x11 kde kde-frameworks
 
 MAINTAINER=	kde@FreeBSD.org
@@ -15,11 +14,8 @@ USE_KDE=	activities archive auth codecs completion config \
 		guiaddons i18n iconthemes jobwidgets kirigami2 kio package \
 		notifications service wayland windowsystem xmlgui kdeclarative \
 		widgetsaddons
-USE_QT=		buildtools_build core dbus declarative gui network qmake_build \
+USE_QT=		buildtools_build concurrent core dbus declarative gui network qmake_build \
 		script sql svg widgets x11extras xml
 USE_XORG=	ice sm x11 xcb xext xrandr
-
-# Respin
-KDE_FRAMEWORKS_VERSION=	5.56.1
 
 .include <bsd.port.mk>

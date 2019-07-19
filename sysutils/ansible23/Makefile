@@ -1,14 +1,15 @@
 # $FreeBSD$
 
 PORTVERSION=	2.3.3.0
-PORTREVISION=	3
+PORTREVISION=	4
 PKGNAMESUFFIX=	23
 
 CONFLICTS=	ansible-* \
 		ansible1-* \
 		ansible24-* \
 		ansible25-* \
-		ansible26-*
+		ansible26-* \
+		ansible27-*
 
 MASTERDIR=	${.CURDIR}/../ansible
 DISTINFO_FILE=	${.CURDIR}/distinfo
